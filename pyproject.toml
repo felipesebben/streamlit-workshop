@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "streamlit-workshop"
+version = "0.1.0"
+description = ""
+authors = ["Felipe Sebben <felipesebben@yahoo.com.br>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+openpyxl = "^3.1.2"
+pandas = "^2.1.4"
+plotly = "^5.18.0"
+psycopg2-binary = "^2.9.9"
+python-dotenv = "^1.0.0"
+sqlalchemy = "^2.0.23"
+streamlit = "^1.29.0"
+pre-commit = "^3.6.0"
+black = "^23.12.0"
+isort = "^5.13.2"
+taskipy = "^1.12.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.taskipy.tasks]
+format = "isort . && black ."
+commit = "git add . && pre-commit run"
