@@ -24,7 +24,6 @@ def connect_to_db():
     engine = create_engine(
         f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
     )
-
     return engine
 
 
@@ -54,3 +53,62 @@ def create_plot(df, plot_type):
     elif plot_type == "pie":
         return go.Figure(data=[go.Pie(labels=df["titulo"], values=df["preco"])])
     # Adicione outros tipos de gráficos conforme necessário.
+
+
+def main():
+    st.title("Dashboard de Preços de Produtos")
+
+    engine = connect_to_db()
+    query = "SELECT DISTINCT titulo, preco FROM produtos ORDER BY preco DESC"
+    df = run_query(query, engine)
+
+    st.write("Produtos:")
+    st.dataframe(df)
+
+    uploaded_file = st.file_uploader("Carregar arquivo Excel", type="xlsx")
+    if uploaded_file is not None:
+        excel_data = pd.read_excel(uploaded_file)
+        df = pd.concat([df, excel_data])  # Combinar com os dados do banco.
+        df = df.nlargest(
+            5, "preco"
+        )  # Selecionar os top 5 produtos com maior preço após concatenar.
+
+    st.write("Top 5 Produtos (Atualizado):")
+    st.dataframe(df)
+
+    plot_types = ["bar", "line", "scatter", "pie"]
+    plot_type = st.selectbox("Selecione o tipo de gráfico", plot_types)
+    plot = create_plot(df, plot_type)
+    st.plotly_chart(plot)
+
+    # Adicionar uma imagem ao gráfico.
+    # st.image("caminho_da_imagem.jpg", caption="Imagem de exemplo")
+
+    # Função adicional 1: Seleção de data
+    st.date_input("Selecione uma data")
+
+    # Função adicional 2: Caixa de texto
+    texto = st.text_input("Digite um texto")
+
+    # Função adicional 3: Slider
+    numero = st.slider("Escolha um número", 0, 100)
+
+    # Função adicional 4: Botão de rádio
+    opcao = st.radio("Escolha uma opção", ["Opção 1", "Opção 2", "Opção 3"])
+
+    # Função adicional 5: Checkbox
+    check = st.checkbox("Marque a opção")
+
+    # Funlção adicional 6: Seletor de cor
+    cor = st.color_picker("Escolha uma cor")
+
+    # Mostrar as escolhas do usuário.
+    st.write("Texto digitado", texto)
+    st.write("Número escolhido", numero)
+    st.write("Opção escolhida", opcao)
+    st.write("Checkbox marcado", check)
+    st.write("Cor escolhida", cor)
+
+
+if __name__ == "__main__":
+    main()
