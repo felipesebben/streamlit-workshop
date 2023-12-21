@@ -68,10 +68,9 @@ def main():
     uploaded_file = st.file_uploader("Carregar arquivo Excel", type="xlsx")
     if uploaded_file is not None:
         excel_data = pd.read_excel(uploaded_file)
-        df = pd.concat([df, excel_data])  # Combinar com os dados do banco.
-        df = df.nlargest(
-            5, "preco"
-        )  # Selecionar os top 5 produtos com maior preço após concatenar.
+        df = pd.concat([df, excel_data]).nlargest(5, "preco")
+    else:
+        df = df.nlargest(5, "preco")
 
     st.write("Top 5 Produtos (Atualizado):")
     st.dataframe(df)
